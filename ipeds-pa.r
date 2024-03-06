@@ -89,7 +89,7 @@ mpampp = ipeds |>
   ) +
   # Theming
   labs(
-    title = "MPP Degree Stagnate as MPA Degree Decline",
+    title = "MPP Degrees Stagnate as MPA Degrees Decline",
     subtitle = "<span style='color:#ff5e00'>Master of Public Administration (MPA)</span> and <span style='color:#0072b2'>Master of Public Policy (MPP)</span> degrees earned by academic year, 1987-2022",
     caption = "Author: Chris Goodman (@cbgoodman), Data: IPEDS, CIP 44.04 (Public Administration) and 44.05 (Public Policy Analysis).",
     y = NULL,
