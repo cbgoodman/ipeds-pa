@@ -1,6 +1,6 @@
 library(tidyverse)
 library(scales)
-library(directlabels)
+library(ggrepel)
 library(ggtext)
 
 # read in data - IPEDS data on completions in PA/PP masters programs
@@ -23,17 +23,12 @@ ipeds = read.csv("data.csv") |>
   ungroup()
 
 # Breaks for y-axis
-breaks = scales::extended_breaks()(ipeds$students)
+breaks = scales::extended_breaks(n = 7)(ipeds$students)
 breaks = breaks[2:length(breaks)]
 
 # Annotation
 mpa_label_vals = ipeds |>
   filter(cip == "Master of Public Administration (MPA)") |>
-  arrange(desc(students)) |>
-  slice_max(students, n = 1)
-
-mpp_label_vals = ipeds |>
-  filter(cip == "Master of Public Policy (MPP)") |>
   arrange(desc(students)) |>
   slice_max(students, n = 1)
 
@@ -44,48 +39,43 @@ mpampp = ipeds |>
   annotate(
     "text",
     x = mpa_label_vals$ay_ending,
-    y = mpa_label_vals$students * 1.075, 
+    y = mpa_label_vals$students * 1.075,
     label = "Largest year of MPA graduates,\n2014 at 13,032",
     size = 2.5,
     family = "Public Sans"
   ) +
   annotate(
-    "segment", 
+    "segment",
     x = mpa_label_vals$ay_ending,
     xend = mpa_label_vals$ay_ending,
-    y = mpa_label_vals$students + 100, 
+    y = mpa_label_vals$students + 100,
     yend = mpa_label_vals$students * 1.045,
-    size = .25
+    linewidth = .25
   ) +
-  # MPP Annotation
-  annotate(
-    "text",
-    x = mpp_label_vals$ay_ending - 3,
-    y = mpp_label_vals$students * 1.4, 
-    label = "Largest year of MPP graduates,\n2022 at 3,200",
-    size = 2.5,
-    family = "Public Sans"
+  geom_richtext(
+    data = ipeds  |> group_by(cip) |> filter(ay_ending == max(ay_ending)), 
+    aes(
+      x = ay_ending,
+      y = students,
+      label = label_comma()(students)),
+    fill = NA, label.color = NA, hjust = 0, size = 2.5
   ) +
-  annotate(
-    "segment", 
-    x = mpp_label_vals$ay_ending,
-    xend = mpp_label_vals$ay_ending - 3,
-    y = mpp_label_vals$students + 100, 
-    yend = mpp_label_vals$students * 1.23,
-    size = .25
-  ) +
+  coord_cartesian(clip = "off", xlim = c(1987,2022)) +
   scale_x_continuous(
-    breaks = seq(1987, 2022, by = 5),
-    expand = c(0, 0)
+    breaks = c(1987, 1992, 1997, 2002, 2007, 2012, 2017, 2022),
+    expand = expansion(mult = c(0, 0))
   ) +
   scale_y_continuous(
     limits = c(-1, 14500),
     breaks = breaks,
     expand = c(0, 0),
     labels = label_comma()
-   ) +
+  ) +
   scale_colour_manual(
     values = c("#ff5e00", "#0072b2")
+  ) +
+  guides(
+    x = guide_axis(cap = "both"), # Cap both ends
   ) +
   # Theming
   labs(
@@ -109,23 +99,41 @@ mpampp = ipeds |>
     panel.grid.major.y = element_line(
       colour = "light grey",
       linetype = "dashed",
-      size = .35
+      linewidth = .35
     ),
     axis.ticks.x = element_line(color = "light grey"),
     axis.ticks.y = element_blank(),
     axis.line.x = element_line(
       colour = "light grey",
       linetype = "solid",
-      size = .5
+      linewidth = .5
     )
   ) +
   # breathing room for the plot
-  theme(plot.margin = unit(c(0.5, 0.6, 0.5, 0.5), "cm")) +
+  theme(plot.margin = unit(c(0.5, 1.25, 0.5, 0.5), "cm")) +
   # make the plot title bold and modify the bottom margin a bit
-  theme(plot.title = element_textbox_simple(family = "Public Sans SemiBold", size = 13, margin = margin(b = 11))) +
+  theme(
+    plot.title = element_textbox_simple(
+      family = "Public Sans SemiBold",
+      size = 13,
+      margin = margin(b = 11)
+    )
+  ) +
   # make the subtitle italic
-  theme(plot.subtitle = element_textbox_simple(family = "Public Sans Italic", size = 11, margin = margin(b = 15))) +
-  theme(plot.caption = element_text(size = 8, hjust = 0, margin = margin(t = 15)))
+  theme(
+    plot.subtitle = element_textbox_simple(
+      family = "Public Sans Italic",
+      size = 11,
+      margin = margin(b = 15)
+    )
+  ) +
+  theme(
+    plot.caption = element_text(
+      size = 8,
+      hjust = 0,
+      margin = margin(t = 15)
+    )
+  )
 
 ggsave(
   plot = mpampp,
