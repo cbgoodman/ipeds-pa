@@ -109,7 +109,7 @@ mpampp = ipeds |>
       linewidth = .5
     )
   ) +
-  # breathing room for the plot
+  # breathing room for the plot + expand right for labels
   theme(plot.margin = unit(c(0.5, 1.25, 0.5, 0.5), "cm")) +
   # make the plot title bold and modify the bottom margin a bit
   theme(
