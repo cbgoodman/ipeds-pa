@@ -1,4 +1,4 @@
-here::i_am("01_ipeds-pa.r")
+here::i_am("code/01_ipeds-pa.r")
 
 library(here)
 library(tidyverse)
@@ -66,9 +66,9 @@ mpampp = ipeds |>
       label = label_comma()(students)),
     fill = NA, label.color = NA, hjust = 0, size = 3.25
   ) +
-  coord_cartesian(clip = "off", xlim = c(1987, 2023)) +
+  coord_cartesian(clip = "off", xlim = c(1987, 2024)) +
   scale_x_continuous(
-    breaks = seq(1987, 2023, 2),
+    breaks = c(1987, 1990, 1995, 2000, 2005, 2010, 2015, 2020, 2024),
     expand = expansion(mult = c(0, 0))
   ) +
   scale_y_continuous(
@@ -86,7 +86,7 @@ mpampp = ipeds |>
   # Theming
   labs(
     title = "MPP Degrees Stagnate as MPA Degrees Decline",
-    subtitle = "<span style='color:#ff5e00'>Master of Public Administration (MPA)</span> and <span style='color:#0072b2'>Master of Public Policy (MPP)</span> degrees earned by academic year, 1987-2023",
+    subtitle = "<span style='color:#ff5e00'>Master of Public Administration (MPA)</span> and <span style='color:#0072b2'>Master of Public Policy (MPP)</span> degrees earned by academic year, 1987-2024",
     caption = "Author: Chris Goodman (@cbgoodman), Data: IPEDS, CIP 44.04 (Public Administration) and 44.05 (Public Policy Analysis).",
     y = NULL,
     x = NULL
@@ -130,9 +130,9 @@ mpamppdiff = ipeds |>
     #labeller = labeller(industry.code = label)
   ) +
   scale_x_continuous(
-    limits = c(1987, 2024),
-    breaks = seq(1988, 2023, 2),
-    expand = expansion(mult = c(0.075, 0.025))
+    limits = c(1987, 2025),
+    breaks = c(1988, 1990, 1995, 2000, 2005, 2010, 2015, 2020, 2024),
+    expand = expansion(mult = c(0.025, 0.025))
   ) +
   scale_y_continuous(
     labels = scales::percent,
@@ -146,7 +146,7 @@ mpamppdiff = ipeds |>
   # Theming
   labs(
     title = "Public affairs degree completions have been declining recently",
-    subtitle = "Change in Master of Public Administration (MPA) and Master of Public Policy (MPP) degrees earned by academic year, 1988-2023",
+    subtitle = "Change in Master of Public Administration (MPA) and Master of Public Policy (MPP) degrees earned by academic year, 1988-2024",
     caption = "Author: Chris Goodman (@cbgoodman), Data: IPEDS, CIP 44.04 (Public Administration) and 44.05 (Public Policy Analysis).",
     y = NULL,
     x = NULL) +
